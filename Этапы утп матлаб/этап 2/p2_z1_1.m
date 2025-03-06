@@ -1,19 +1,43 @@
-syms x;
-f = asin(x);  % Определяем функцию
+syms x
+f = asin(x);
 
-% Разложения Тейлора от 1 до 4 членов
-T1 = taylor(f, x, 'ExpansionPoint', -0.2, 'Order', 2);
-T2 = taylor(f, x, 'ExpansionPoint', -0.2, 'Order', 3);
-T3 = taylor(f, x, 'ExpansionPoint', -0.2, 'Order', 4);
-T4 = taylor(f, x, 'ExpansionPoint', -0.2, 'Order', 5);
+a = -0.2;
+n_val = 1:4;
+x_val = -1:0.01:1;
+f_val = double(subs(f, x, x_val));
 
-% Вывод результатов
-disp('Ряд Тейлора для asin(x) в точке x = -0.2:');
-disp('При n = 1:');
-disp(T1);
-disp('При n = 2:');
-disp(T2);
-disp('При n = 3:');
-disp(T3);
-disp('При n = 4:');
-disp(T4);
+figure;
+hold on;
+
+%ряд Тейлора и ошибки
+for n = n_val
+    Tn = taylor(f, x, 'Order', n + 1, 'ExpansionPoint', a);
+    Tn_val = double(subs(Tn, x, x_val));
+    err = abs(f_val - Tn_val);
+    plot(x_val, Tn_val, 'DisplayName', ['T_' num2str(n)], 'LineWidth', 1.5);
+end
+
+plot(x_val, f_val, 'k--', 'DisplayName', 'arcsin(x)', 'LineWidth', 2);
+
+xlabel('x');
+ylabel('y');
+title('Ряды Тейлора');
+legend show;
+grid on;
+
+%График ошибок
+figure;
+hold on;
+for n = n_val
+    Tn = taylor(f, x, 'Order', n + 1, 'ExpansionPoint', a);
+    Tn_val = double(subs(Tn, x, x_val));
+    err = abs(f_val - Tn_val);
+    plot(x_val, err, 'DisplayName', ['Ошибка T' num2str(n)], 'LineWidth', 1.5);
+end
+
+xlabel('x');
+ylabel('Ошибка');
+title('Ошибка аппроксимации');
+legend show;
+grid on;
+hold off;
